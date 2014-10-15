@@ -1,4 +1,7 @@
-﻿#Updated 10/13/2014
+﻿#Updated 10/15/2014
+#    Added output of number of AD group members with warning message about time delays if greater
+#      than 100 members are in it.
+#Updated 10/13/2014
 #    Added check to see if group member in on-prem AD has an email address and exits if someone doesn't.
 #Initial Release 10/3/2014
 #Define an optional parameter so you can use it from the command line rather than interactively if you so choose.
@@ -42,6 +45,14 @@ Write-Host "`nPopulating the members from AD..."
 #Now get the members.
 $groupMembersAD = Get-ADGroupMember -Identity $groupObject -Server $domainController
 $ADEmailAddresses = @()
+
+#Write the number of members to the screen and tell the user to be patient if necessary since the queries take time.
+$groupMembersADCount = $groupMembersAD.Count
+Write-Host "`n There are $groupMembersADCount members of the group..."
+if($groupMembersADCount -ge 100)
+{
+    Write-Host "`tPlease be patient; this may take a bit of time!" -ForegroundColor Yellow
+}
 
 $allHaveEmailValues = $true
 
